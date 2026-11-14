@@ -194,6 +194,17 @@ jobs:
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           submodules: recursive
+      - name: Personalizza server QWireless
+        shell: pwsh
+        run: |
+          $f = "libs/hbb_common/src/config.rs"
+          $c = Get-Content $f -Raw
+          $c = $c.Replace('"rs-ny.rustdesk.com"', '"assistenzaremota.qwireless.it"')
+          $c = $c.Replace('"OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw="', '"anNBbvC0rIwGfKz7O6V8UYbxD9gjnfezM5oioj92efw="')
+          Set-Content $f $c -NoNewline
+          if (-not (Select-String $f -Pattern 'assistenzaremota.qwireless.it' -SimpleMatch)) { throw "Server non sostituito" }
+          if (-not (Select-String $f -Pattern 'anNBbvC0rIwGfKz7O6V8UYbxD9gjnfezM5oioj92efw=' -SimpleMatch)) { throw "Key non sostituita" }
+
 
       - name: Restore bridge files
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
